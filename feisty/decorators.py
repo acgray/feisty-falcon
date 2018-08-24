@@ -63,7 +63,7 @@ def response_schema(schema_or_cls, enforce=True):
 
         @functools.wraps(f)
         def _wrapped(self, req, resp, *args, **kwargs):
-            ret = f(req, resp, *args, **kwargs)
+            ret = f(self, req, resp, *args, **kwargs)
             if enforce:
                 result = schema.dump(resp.media)
                 resp.media = result.data
