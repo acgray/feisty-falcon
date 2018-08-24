@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "feisty"
+version = "0.1.0-pre"
+description = ""
+authors = ["Adam Gray <acgray@me.com>"]
+
+[tool.poetry.dependencies]
+python = "3.*"
+falcon = "^1.4"
+marshmallow = "^2.15"
+apispec = "^0.39.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^3.7"
+
+[tool.poetry.scripts]
+feisty = "feisty.command_line.main"
