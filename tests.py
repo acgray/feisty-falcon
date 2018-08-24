@@ -87,57 +87,58 @@ def test_generate_apispec():
     spec = feisty.generate.generate_schema(api, {
         'title': 'Test API',
         'version': '0.0.1'})
+    import pprint
+    pprint.pprint(spec.to_dict())
     want_schema = {
-        'info': {
-            'title': 'Test API',
-            'version': '0.0.1'
-        },
-        'paths': collections.OrderedDict([
-            ('/test', {
-                'get': {
-                    'parameters': [
-                        {'in': 'body',
-                         'schema': {
-                             'type': 'object',
-                             'properties': {
-                                 'name': {
-                                     'type': 'string',
-                                     'enum': ['Adam']}}}}],
-                    'responses': {
-                        200: {}}},
-                'post': {
-                    'parameters': [
-                        {'in': 'body',
-                         'schema': {
-                             'type': 'object',
-                             'properties': {
-                                 'name': {
-                                     'type': 'string',
-                                     'enum': ['Adam']}}}}],
-                    'responses': {
-                        200: {}}}}), (
-                '/test_class', {'get': {
-                    'parameters': [{
-                        'in': 'body',
-                        'schema': {
-                            'type': 'object',
-                            'properties': {
-                                'name': {
-                                    'type': 'string',
-                                    'enum': ['Adam']}}}}],
-                    'responses': {200: {}}}, 'post': {
-                    'parameters': [{'in': 'body',
-                                    'schema': {
-                                        'type': 'object',
-                                        'properties': {
-                                            'name': {
-                                                'type': 'string',
-                                                'enum': ['Adam']}}}}],
-                    'responses': {200: {}}}})]),
-        'tags': [],
-        'swagger': '2.0',
         'definitions': {},
-        'parameters': {}}
+        'info': {'title': 'Test API', 'version': '0.0.1'},
+        'parameters': {},
+        'paths': collections.OrderedDict([
+            ('/test',
+             {'get': {
+                 'parameters': [
+                     {'enum': ['Adam'],
+                      'in': 'query',
+                      'name': 'name',
+                      'required': False,
+                      'type': 'string'}],
+                 'responses': {200: {}}},
+                 'post': {
+                     'parameters': [
+                         {'in': 'body',
+                          'name': 'body',
+                          'required': False,
+                          'schema': {
+                              'properties': {
+                                  'name': {
+                                      'enum': [
+                                          'Adam'],
+                                      'type': 'string'}},
+                              'type': 'object'}}],
+                     'responses': {200: {}}}}),
+            ('/test_class',
+             {'get': {
+                 'parameters': [
+                     {'enum': ['Adam'],
+                      'in': 'query',
+                      'name': 'name',
+                      'required': False,
+                      'type': 'string'}],
+                 'responses': {200: {}}},
+                 'post': {
+                     'parameters': [
+                         {'in': 'body',
+                          'name': 'body',
+                          'required': False,
+                          'schema': {
+                              'properties': {
+                                  'name': {
+                                      'enum': [
+                                          'Adam'],
+                                      'type': 'string'}},
+                              'type': 'object'}}],
+                     'responses': {200: {}}}})]),
+        'swagger': '2.0',
+        'tags': []}
 
     assert spec.to_dict() == want_schema
-
