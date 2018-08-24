@@ -13,15 +13,12 @@ class CommandLineError(Exception):
         self.error = error
 
 
-def _feisty_command_line(argv):
+def _feisty_command_line():
     parser = argparse.ArgumentParser()
     parser.add_argument('api_object')
     parser.add_argument('--debug', type=bool)
 
-    if len(argv) > 0 and argv[0].endswith('.py'):
-        argv.pop(0)
-
-    args = parser.parse_args(argv)
+    args = parser.parse_args()
 
     try:
         m = re.match(
@@ -49,7 +46,7 @@ def _feisty_command_line(argv):
 
 def main():
     try:
-        _feisty_command_line(sys.argv)
+        _feisty_command_line()
     except CommandLineError as e:
         if os.environ.get('DEBUG'):
             raise
