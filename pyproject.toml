@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "feisty"
-version = "0.2.1"
+version = "0.2.2"
 description = "Give your Falcon some Swagger"
 authors = ["Adam Gray <acgray@me.com>"]
 
