@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "feisty"
-version = "0.1.0-pre"
-description = ""
+version = "0.2.1"
+description = "Give your Falcon some Swagger"
 authors = ["Adam Gray <acgray@me.com>"]
 
 [tool.poetry.dependencies]
@@ -14,4 +14,4 @@ apispec = "^0.39.0"
 pytest = "^3.7"
 
 [tool.poetry.scripts]
-feisty = "feisty.command_line.main"
+feisty = "feisty.command_line:main"
