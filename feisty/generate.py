@@ -12,6 +12,39 @@ class FeistyConfigSchema(marshmallow.Schema):
     version = marshmallow.fields.String(required=True)
 
 
+converter = apispec.ext.marshmallow.OpenAPIConverter('2.0')
+
+
+def _recurse_nodes(nodes, spec):
+    for node in nodes:
+        if hasattr(node, 'children') and node.children:
+            _recurse_nodes(node.children, spec)
+        else:
+            ops = {}
+            for method, f in node.method_map.items():
+                if (method.lower() not in ['get', 'put', 'post', 'delete']
+                        or isinstance(f, functools.partial)):
+                    continue
+
+                req_schema = getattr(f, '_feisty_request_schema', None)
+                resp_schema = getattr(f, '_feisty_response_schema', None)
+
+                op = {'parameters': [], 'responses': {200: {}}}
+                if req_schema:
+                    op['parameters'] = converter.schema2parameters(
+                        req_schema,
+                        default_in=f._feisty_request_schema_in)
+
+                if resp_schema:
+                    op['responses'][200][
+                        'schema'] = converter.schema2jsonschema(
+                        resp_schema)
+
+                ops[method.lower()] = op
+
+            spec.add_path(node.uri_template, ops)
+
+
 def generate_schema(api, config=None):
     if not config:
         cwd = os.getcwd()
@@ -35,30 +68,6 @@ def generate_schema(api, config=None):
         openapi_version='2.0',
         plugins=(apispec.ext.marshmallow.MarshmallowPlugin(),))
 
-    converter = apispec.ext.marshmallow.OpenAPIConverter('2.0')
-
-    for node in api._router._roots:
-        ops = {}
-        for method, f in node.method_map.items():
-            if (method.lower() not in ['get', 'put', 'post', 'delete']
-                    or isinstance(f, functools.partial)):
-                continue
-
-            req_schema = getattr(f, '_feisty_request_schema', None)
-            resp_schema = getattr(f, '_feisty_response_schema', None)
-
-            op = {'parameters': [], 'responses': {200: {}}}
-            if req_schema:
-                op['parameters'] = converter.schema2parameters(
-                    req_schema,
-                    default_in=f._feisty_request_schema_in)
-
-            if resp_schema:
-                op['responses'][200]['schema'] = converter.schema2jsonschema(
-                    resp_schema)
-
-            ops[method.lower()] = op
-
-        spec.add_path(node.uri_template, ops)
+    _recurse_nodes(api._router._roots, spec)
 
     return spec
